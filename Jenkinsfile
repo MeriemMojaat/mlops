@@ -4,62 +4,62 @@ pipeline {
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
     }
     stages {
-        stage('Checkout') {
+        stage('Récupérer le code') {
             steps {
-                git url: 'https://github.com/meriemmojaat/ml_project.git', branch: 'main'
+                git url: 'https://github.com/MeriemMojaat/mlops.git', branch: 'main'
             }
         }
-        stage('Install Dependencies') {
-            steps {
-                sh 'make install'
-            }
-        }
-        stage('Lint Code') {
-            steps {
-                sh 'make lint'
-            }
-        }
-        stage('Format Code') {
-            steps {
-                sh 'make format'
-            }
-        }
-        stage('Prepare Data') {
-            steps {
-                sh 'make prepare'
-            }
-        }
-        stage('Train and Save Model') {
-            steps {
-                sh 'make train'
-            }
-        }
-        stage('Evaluate Model') {
-            steps {
-                sh 'make evaluate'
-            }
-        }
-        stage('Start Docker Compose') {
+        stage('Démarrer Elasticsearch et Kibana') {
             steps {
                 sh 'make docker'
             }
         }
-        stage('Build Docker Image') {
+        stage('Installer les dépendances') {
+            steps {
+                sh 'make install'
+            }
+        }
+        stage('Vérifier le code') {
+            steps {
+                sh 'make lint'
+            }
+        }
+        stage('Formatter le code') {
+            steps {
+                sh 'make format'
+            }
+        }
+        stage('Préparer les données') {
+            steps {
+                sh 'make prepare'
+            }
+        }
+        stage('Entraîner et sauvegarder le modèle') {
+            steps {
+                sh 'make train'
+            }
+        }
+        stage('Évaluer le modèle') {
+            steps {
+                sh 'make evaluate'
+            }
+        }
+        stage('Construire l’image Docker') {
             steps {
                 sh 'make build'
             }
         }
-        stage('Run Docker Container') {
+        stage('Lancer le conteneur Docker') {
             steps {
                 sh 'make run_docker'
             }
         }
-        stage('Push to Docker Hub') {
+        stage('Pousser vers Docker Hub') {
             steps {
                 sh 'make push DOCKER_HUB_PASSWORD=$DOCKER_HUB_CREDENTIALS_PSW'
             }
         }
-        stage('Clean Up') {
+        stage('Nettoyer') {
             steps {
                 sh 'make docker_clean'
             }
