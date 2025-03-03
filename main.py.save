@@ -1,0 +1,89 @@
+import argparse
+import model_pipeline as mp
+import mlflow
+import mlflow.sklearn
+from sklearn.metrics import classification_report, accuracy_score
+import os
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Machine Learning Pipeline")
+
+    parser.add_argument(
+        "--train_data", required=True, help="Path to the training data CSV file"
+    )
+    parser.add_argument(
+        "--test_data", required=True, help="Path to the test data CSV file"
+    )
+    parser.add_argument("--train", action="store_true", help="Flag to train the model")
+    parser.add_argument(
+        "--evaluate", action="store_true", help="Flag to evaluate the model"
+    )
+    parser.add_argument(
+        "--save", action="store_true", help="Flag to save the trained model"
+    )
+    parser.add_argument(
+        "--load", action="store_true", help="Flag to load a pre-trained model"
+    )
+    parser.add_argument(
+        "--prepare_data", action="store_true", help="Flag to prepare the data"
+    )
+
+    args = parser.parse_args()
+
+    if not os.path.exists(args.train_data):
+        print(f"Error: Train data file {args.train_data} does not exist.")
+        return
+
+    if not os.path.exists(args.test_data):
+        print(f"Error: Test data file {args.test_data} does not exist.")
+        return
+
+    if args.prepare_data:
+        X_train, y_train, X_test, y_test, scaler, label_encoders = mp.prepare_data(
+            args.train_data, args.test_data
+        )
+        print("✅ Data prepared successfully.")
+        return
+
+    # Charger les données
+    X_train, y_train, X_test, y_test, scaler, label_encoders = mp.prepare_data(
+        args.train_data, args.test_data
+    )
+
+    mlflow.set_experiment("Churn Prediction")
+
+    with mlflow.start_run():
+        if args.train:
+            model = mp.train_model(X_train, y_train)
+
+            mlflow.sklearn.log_model(model, "model")
+            print("✅ Model trained and logged in MLflow")
+M6
+            if args.save:
+                mp.save_model(model, "xgboost_model.joblib")
+                print("💾 Model saved as xgboost_model.joblib")
+
+        if args.evaluate:
+            if not os.path.exists("xgboost_model.joblib"):
+                print("Error: Model file 'xgboost_model.joblib' does not exist.")
+                return
+
+            model = mp.load_model("xgboost_model.joblib")
+            y_pred = model.predict(X_test)
+            acc = accuracy_score(y_test, y_pred)
+
+            mlflow.log_metric("accuracy", acc)
+            print(f"✅ Accuracy: {acc:.4f}")
+            print(classification_report(y_test, y_pred))
+
+        if args.load:
+            if not os.path.exists("xgboost_model.joblib"):
+                print("Error: Model file 'xgboost_model.joblib' does not exist.")
+                return
+            model = mp.load_model("xgboost_model.joblib")
+            print("✅ Model loaded successfully.")
+
+
+if __name__ == "__main__":
+    main()

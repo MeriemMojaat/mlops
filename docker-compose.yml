@@ -1,0 +1,34 @@
+version: '3.7'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin="*"
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=changeme
+    ports:
+      - "9200:9200"
+    networks:
+      - elastic
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.9
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    ports:
+      - "5601:5601"
+    networks:
+      - elastic
+
+networks:
+  elastic:
+    driver: bridge

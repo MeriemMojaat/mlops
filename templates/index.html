@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Churn Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Churn Prediction</h1>
+        <p>Fill in the details below to predict customer churn.</p>
+        
+        <form action="/predict" method="POST">
+            <div class="form-group">
+                <label for="State">State:</label>
+                <input type="text" id="State" name="State" placeholder="Enter State">
+            </div>
+
+            <div class="form-group">
+                <label for="Account_length">Account Length:</label>
+                <input type="text" id="Account_length" name="Account_length" placeholder="Enter Account Length">
+            </div>
+
+            <div class="form-group">
+                <label for="Area_code">Area Code:</label>
+                <input type="text" id="Area_code" name="Area_code" placeholder="Enter Area Code">
+            </div>
+
+            <div class="form-group">
+                <label for="International_plan">International Plan:</label>
+                <input type="text" id="International_plan" name="International_plan" placeholder="Yes or No">
+            </div>
+
+            <div class="form-group">
+                <label for="Voice_mail_plan">Voice Mail Plan:</label>
+                <input type="text" id="Voice_mail_plan" name="Voice_mail_plan" placeholder="Yes or No">
+            </div>
+
+            <div class="form-group">
+                <label for="Number_vmail_messages">Number of Voice Mail Messages:</label>
+                <input type="text" id="Number_vmail_messages" name="Number_vmail_messages" placeholder="Enter Number">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_day_minutes">Total Day Minutes:</label>
+                <input type="text" id="Total_day_minutes" name="Total_day_minutes" placeholder="Enter Minutes">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_day_calls">Total Day Calls:</label>
+                <input type="text" id="Total_day_calls" name="Total_day_calls" placeholder="Enter Calls">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_day_charge">Total Day Charge:</label>
+                <input type="text" id="Total_day_charge" name="Total_day_charge" placeholder="Enter Charge">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_eve_minutes">Total Evening Minutes:</label>
+                <input type="text" id="Total_eve_minutes" name="Total_eve_minutes" placeholder="Enter Minutes">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_eve_calls">Total Evening Calls:</label>
+                <input type="text" id="Total_eve_calls" name="Total_eve_calls" placeholder="Enter Calls">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_eve_charge">Total Evening Charge:</label>
+                <input type="text" id="Total_eve_charge" name="Total_eve_charge" placeholder="Enter Charge">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_night_minutes">Total Night Minutes:</label>
+                <input type="text" id="Total_night_minutes" name="Total_night_minutes" placeholder="Enter Minutes">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_night_calls">Total Night Calls:</label>
+                <input type="text" id="Total_night_calls" name="Total_night_calls" placeholder="Enter Calls">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_night_charge">Total Night Charge:</label>
+                <input type="text" id="Total_night_charge" name="Total_night_charge" placeholder="Enter Charge">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_intl_minutes">Total International Minutes:</label>
+                <input type="text" id="Total_intl_minutes" name="Total_intl_minutes" placeholder="Enter Minutes">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_intl_calls">Total International Calls:</label>
+                <input type="text" id="Total_intl_calls" name="Total_intl_calls" placeholder="Enter Calls">
+            </div>
+
+            <div class="form-group">
+                <label for="Total_intl_charge">Total International Charge:</label>
+                <input type="text" id="Total_intl_charge" name="Total_intl_charge" placeholder="Enter Charge">
+            </div>
+
+            <div class="form-group">
+                <label for="Customer_service_calls">Customer Service Calls:</label>
+                <input type="text" id="Customer_service_calls" name="Customer_service_calls" placeholder="Enter Calls">
+            </div>
+
+            <button type="submit" class="submit-btn">Get Prediction</button>
+        </form>
+    </div>
+</body>
+</html>
