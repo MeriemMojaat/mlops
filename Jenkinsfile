@@ -9,8 +9,13 @@ pipeline {
         stage('Installer les dépendances') {
             steps {
                 sh '''
+                    # Install python3-venv package
+                    sudo apt-get update
+                    sudo apt-get install -y python3-venv
+                    # Create and activate virtual environment
                     python3 -m venv venv
                     . venv/bin/activate
+                    pip install --upgrade pip
                     pip install -r requirements.txt
                 '''
             }
@@ -52,7 +57,7 @@ pipeline {
     }
     post {
         always {
-            node('') {  // Use empty label to run on any available agent
+            node('') {
                 sh 'pkill -f "python app1.py" || true'
             }
         }
