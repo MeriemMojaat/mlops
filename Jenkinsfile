@@ -52,7 +52,7 @@ pipeline {
     }
     post {
         always {
-            node {
+            node('') {  // Use empty label to run on any available agent
                 sh 'pkill -f "python app1.py" || true'
             }
         }
