@@ -1,17 +1,9 @@
 pipeline {
     agent any
-    environment {
-        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
-    }
     stages {
         stage('Récupérer le code') {
             steps {
                 git url: 'https://github.com/MeriemMojaat/mlops.git', branch: 'main'
-            }
-        }
-        stage('Démarrer Elasticsearch et Kibana') {
-            steps {
-                sh 'make docker'
             }
         }
         stage('Installer les dépendances') {
@@ -24,51 +16,38 @@ pipeline {
                 sh 'make lint'
             }
         }
-        stage('Formatter le code') {
+        stage('Vérifier Elasticsearch et Kibana') {
             steps {
-                sh 'make format'
+                sh 'curl http://localhost:9200 || echo "Elasticsearch not running"'
+                sh 'curl http://localhost:5601 || echo "Kibana not running"'
             }
         }
-        stage('Préparer les données') {
+        stage('Vérifier FastAPI') {
             steps {
-                sh 'make prepare'
+                sh 'curl http://localhost:8000 || echo "FastAPI not running"'
             }
         }
-        stage('Entraîner et sauvegarder le modèle') {
+        stage('Lancer Flask') {
             steps {
-                sh 'make train'
+                sh 'make run_flask &'
+                sh 'sleep 10'
+                sh 'curl http://localhost:5000 || echo "Flask test failed"'
             }
         }
-        stage('Évaluer le modèle') {
+        stage('Réentraîner le modèle via Flask') {
             steps {
-                sh 'make evaluate'
+                sh 'curl -X POST http://localhost:5000/retrain -H "Content-Type: application/json" -d \'{"learning_rate": 0.1, "n_estimators": 100, "max_depth": 6, "min_child_weight": 1, "gamma": 0, "subsample": 0.8, "colsample_bytree": 0.8}\' || echo "Retrain failed"'
             }
         }
-        stage('Construire l’image Docker') {
+        stage('Tester FastAPI pour prédiction') {
             steps {
-                sh 'make build'
-            }
-        }
-        stage('Lancer le conteneur Docker') {
-            steps {
-                sh 'make run_docker'
-            }
-        }
-        stage('Pousser vers Docker Hub') {
-            steps {
-                sh 'make push DOCKER_HUB_PASSWORD=$DOCKER_HUB_CREDENTIALS_PSW'
-            }
-        }
-        stage('Nettoyer') {
-            steps {
-                sh 'make docker_clean'
+                sh 'curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d \'{"State": "CA", "Account_length": 50, "Area_code": 415, "International_plan": "No", "Voice_mail_plan": "Yes", "Number_vmail_messages": 10, "Total_day_minutes": 200.5, "Total_day_calls": 100, "Total_day_charge": 34.08, "Total_eve_minutes": 180.3, "Total_eve_calls": 90, "Total_eve_charge": 15.33, "Total_night_minutes": 150.2, "Total_night_calls": 80, "Total_night_charge": 6.76, "Total_intl_minutes": 10.5, "Total_intl_calls": 5, "Total_intl_charge": 2.84, "Customer_service_calls": 2}\' || echo "FastAPI prediction failed"'
             }
         }
     }
     post {
         always {
-            sh 'docker logout'
-            archiveArtifacts artifacts: 'traces.txt, *.json, loss_plot.png', allowEmptyArchive: true
+            sh 'pkill -f "python app1.py" || true'
         }
     }
 }

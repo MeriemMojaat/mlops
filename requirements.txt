@@ -12,3 +12,4 @@ imbalanced-learn
 mlflow
 black
 elasticsearch
+boto3
