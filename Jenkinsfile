@@ -8,7 +8,11 @@ pipeline {
         }
         stage('Installer les dépendances') {
             steps {
-                sh 'make install'
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                '''
             }
         }
         stage('Vérifier le code') {
@@ -18,7 +22,7 @@ pipeline {
         }
         stage('Vérifier Elasticsearch et Kibana') {
             steps {
-                sh 'curl http://localhost:9200 || echo "Elasticsearch not running"'
+                sh 'curl -u elastic:changeme http://localhost:9200 || echo "Elasticsearch not running"'
                 sh 'curl http://localhost:5601 || echo "Kibana not running"'
             }
         }
@@ -29,6 +33,7 @@ pipeline {
         }
         stage('Lancer Flask') {
             steps {
+                sh 'pkill -f "python app1.py" || true'
                 sh 'make run_flask &'
                 sh 'sleep 10'
                 sh 'curl http://localhost:5000 || echo "Flask test failed"'
@@ -47,7 +52,9 @@ pipeline {
     }
     post {
         always {
-            sh 'pkill -f "python app1.py" || true'
+            node {
+                sh 'pkill -f "python app1.py" || true'
+            }
         }
     }
 }
