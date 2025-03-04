@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrain Model</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Retrain Churn Prediction Model</h1>
+        <form id="retrainForm" action="{{ url_for('retrain') }}" method="POST">
+            <label for="learning_rate">Learning Rate:</label>
+            <input type="number" step="0.01" id="learning_rate" name="learning_rate" value="0.1" required><br>
+
+            <label for="n_estimators">Number of Estimators:</label>
+            <input type="number" id="n_estimators" name="n_estimators" value="100" required><br>
+
+            <label for="max_depth">Max Depth:</label>
+            <input type="number" id="max_depth" name="max_depth" value="6" required><br>
+
+            <label for="min_child_weight">Min Child Weight:</label>
+            <input type="number" step="0.1" id="min_child_weight" name="min_child_weight" value="1" required><br>
+
+            <label for="gamma">Gamma:</label>
+            <input type="number" step="0.1" id="gamma" name="gamma" value="0" required><br>
+
+            <label for="subsample">Subsample:</label>
+            <input type="number" step="0.1" id="subsample" name="subsample" value="0.8" required><br>
+
+            <label for="colsample_bytree">Colsample Bytree:</label>
+            <input type="number" step="0.1" id="colsample_bytree" name="colsample_bytree" value="0.8" required><br>
+
+            <button type="submit">Retrain Model</button>
+        </form>
+        <a href="{{ url_for('home') }}" class="btn">Back to Home</a>
+        <div id="message"></div>
+    </div>
+    <script>
+        document.getElementById('retrainForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = {
+                learning_rate: parseFloat(document.getElementById('learning_rate').value),
+                n_estimators: parseInt(document.getElementById('n_estimators').value),
+                max_depth: parseInt(document.getElementById('max_depth').value),
+                min_child_weight: parseFloat(document.getElementById('min_child_weight').value),
+                gamma: parseFloat(document.getElementById('gamma').value),
+                subsample: parseFloat(document.getElementById('subsample').value),
+                colsample_bytree: parseFloat(document.getElementById('colsample_bytree').value)
+            };
+
+            fetch('/retrain', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('message');
+                if (data.message) {
+                    messageDiv.innerHTML = `<p style="color: green;">${data.message} (Accuracy: ${data.accuracy})</p>`;
+                } else {
+                    messageDiv.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('message').innerHTML = `<p style="color: red;">Error: ${error}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>

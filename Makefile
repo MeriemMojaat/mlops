@@ -88,5 +88,5 @@ docker:
 all_docker: build run_docker push
 	@echo "🔄 Full Docker pipeline executed."
 
-all: install format lint prepare train evaluate build push run_docker
+all: install format lint docker prepare train evaluate build push all_docker
 	@echo "🔄 Full pipeline executed."

@@ -96,7 +96,7 @@ def main():
         return
 
     log_trace("Preparing data")
-    with mlflow.start_run(run_name="DataPrep") as prep_run:
+    with mlflow.start_run(run_name="DataPrep"):
         X_train, y_train, X_test, y_test, scaler, label_encoders = mp.prepare_data(
             args.train_data, args.test_data
         )
