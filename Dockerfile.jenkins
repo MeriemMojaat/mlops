@@ -2,9 +2,14 @@ FROM jenkins/jenkins:lts
 
 USER root
 
-# Install Docker CLI
+# Install Docker CLI (from previous steps)
 RUN apt-get update && \
     apt-get install -y docker.io && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install python3-venv
+RUN apt-get update && \
+    apt-get install -y python3-venv && \
     rm -rf /var/lib/apt/lists/*
 
 USER jenkins
