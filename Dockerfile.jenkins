@@ -4,7 +4,7 @@ USER root
 
 # Install Docker CLI, python3-venv, and make
 RUN apt-get update && \
-    apt-get install -y docker.io python3-venv make && \
+    apt-get install -y docker.io python3-venv make flake8 && \
     rm -rf /var/lib/apt/lists/*
 
 USER jenkins
