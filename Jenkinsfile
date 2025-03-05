@@ -38,7 +38,10 @@ pipeline {
         stage('Lancer Flask') {
             steps {
                 sh 'pkill -f "python app1.py" || true'
-                sh 'make run_flask &'
+                sh '''
+                    . venv/bin/activate
+                    make run_flask &
+                '''
                 sh 'sleep 10'
                 sh 'curl http://localhost:5000 || echo "Flask test failed"'
             }
