@@ -39,7 +39,8 @@ train:
 evaluate:
 	$(PYTHON) main.py --train_data churn-bigml-80.csv --test_data churn-bigml-20.csv --evaluate
 	@echo "📊 Model evaluated."
-
+run_flask:
+	python app1.py
 # Lancer l'API avec FastAPI
 run_api:
 	$(PYTHON) -m uvicorn app:app --reload --host 0.0.0.0 --port 8000
