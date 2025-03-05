@@ -26,8 +26,8 @@ pipeline {
         }
         stage('Vérifier Elasticsearch et Kibana') {
             steps {
-                sh 'curl -u elastic:changeme http://localhost:9200 || echo "Elasticsearch not running"'
-                sh 'curl http://localhost:5601 || echo "Kibana not running"'
+                sh 'curl -u elastic:changeme http://localhost:9200'
+                sh 'curl http://localhost:5601'
             }
         }
         stage('Vérifier FastAPI') {
