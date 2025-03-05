@@ -18,7 +18,10 @@ pipeline {
         }
         stage('Vérifier le code') {
             steps {
-                sh 'make lint'
+                sh '''
+                    . venv/bin/activate
+                    make lint
+                '''
             }
         }
         stage('Vérifier Elasticsearch et Kibana') {
