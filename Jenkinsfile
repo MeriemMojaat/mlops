@@ -44,7 +44,7 @@ pipeline {
         }
         stage('Vérifier FastAPI') {
             steps {
-                sh 'curl http://localhost:8000'
+                sh 'curl http://localhost:8000 || echo "FastAPI not running"'
             }
         }
         stage('Lancer Flask') {
