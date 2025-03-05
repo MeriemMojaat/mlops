@@ -3,7 +3,19 @@ pipeline {
     stages {
         stage('Récupérer le code') {
             steps {
-                git url: 'https://github.com/MeriemMojaat/mlops.git', branch: 'main'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [
+                        [$class: 'CloneOption', depth: 0, noTags: false, reference: '', shallow: false],
+                        [$class: 'GitLFSPull'],
+                        [$class: 'CheckoutOption', timeout: 30]
+                    ],
+                    userRemoteConfigs: [[url: 'https://github.com/MeriemMojaat/mlops.git']],
+                    gitTool: 'Default'
+                ])
+                sh 'git config http.postBuffer 524288000'
             }
         }
         stage('Installer les dépendances') {
